@@ -1,75 +1,71 @@
-# Nuxt Minimal Starter
+# Groove - Application Audio Interactive
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Groove est une application web interactive permettant de créer et manipuler des sons en temps réel. L'application offre une interface intuitive pour expérimenter avec différents effets audio et créer des compositions musicales uniques.
 
-## Setup
+## Démo
 
-Make sure to install dependencies:
+Une version de démonstration est disponible à l'adresse : [https://groove.aife.io/](https://groove.aife.io/)
 
+## Prérequis
+
+- Node.js (version 18 ou supérieure)
+- Bun (version 1.0 ou supérieure)
+
+## Installation
+
+1. Clonez le dépôt :
 ```bash
-# npm
-npm install
+git clone [URL_DU_REPO]
+cd groove
+```
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
+2. Installez les dépendances avec Bun :
+```bash
 bun install
 ```
 
-## Development Server
+## Développement
 
-Start the development server on `http://localhost:3000`:
+Pour lancer le serveur de développement sur `http://localhost:3000` :
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
 bun run dev
 ```
 
 ## Production
 
-Build the application for production:
+Pour construire l'application pour la production :
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
 bun run build
 ```
 
-Locally preview production build:
+Pour prévisualiser localement la version de production :
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Fonctionnalités
+
+- Interface utilisateur intuitive et moderne
+- Manipulation audio en temps réel
+- Effets audio personnalisables
+- Sauvegarde et chargement des compositions
+- Compatibilité multi-navigateurs
+
+## Technologies utilisées
+
+- Nuxt.js
+- Vue.js
+- Web Audio API
+- Bun (gestionnaire de paquets)
+- Tailwind CSS
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+
+## Licence
+
+[À définir]
