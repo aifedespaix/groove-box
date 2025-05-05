@@ -31,42 +31,86 @@ function togglePitch(trackId: number) {
             <div class="flex flex-wrap gap-4 items-center">
                 <button
                     @click="() => addNewTrack('kick')"
-                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40"
-                >Ajouter Kick</button>
+                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40 flex items-center gap-2"
+                >
+                    <Icon
+                        name="heroicons:musical-note"
+                        class="w-5 h-5"
+                    />
+                    Ajouter Kick
+                </button>
                 <button
                     @click="() => addNewTrack('snare')"
-                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40"
-                >Ajouter Snare</button>
+                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40 flex items-center gap-2"
+                >
+                    <Icon
+                        name="heroicons:musical-note"
+                        class="w-5 h-5"
+                    />
+                    Ajouter Snare
+                </button>
                 <button
                     @click="() => addNewTrack('hihat')"
-                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40"
-                >Ajouter HiHat</button>
+                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40 flex items-center gap-2"
+                >
+                    <Icon
+                        name="heroicons:musical-note"
+                        class="w-5 h-5"
+                    />
+                    Ajouter HiHat
+                </button>
                 <button
                     @click="() => addNewTrack('lead')"
-                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40"
-                >Ajouter Synth</button>
-
-                <button
-                    v-if="!sequencer.isPlaying"
-                    @click="sequencer.start"
-                    class="px-6 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-all duration-200 border border-green-400/20 hover:border-green-400/40"
-                >Démarrer</button>
-                <button
-                    v-else
-                    @click="sequencer.stop"
-                    class="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all duration-200 border border-red-400/20 hover:border-red-400/40"
-                >Stop</button>
-
-                <label class="flex items-center gap-2 bg-dark-600/50 px-4 py-2 rounded-lg border border-orange-400/20">
-                    Tempo
-                    <input
-                        type="number"
-                        v-model="sequencer.tempo"
-                        min="30"
-                        max="300"
-                        class="w-20 text-orange-400 font-bold bg-transparent border-b border-orange-400/20 focus:border-orange-400/40 outline-none px-2 py-1"
+                    class="px-4 py-2 bg-orange-400/10 hover:bg-orange-400/20 text-orange-400 rounded-lg transition-all duration-200 border border-orange-400/20 hover:border-orange-400/40 flex items-center gap-2"
+                >
+                    <Icon
+                        name="heroicons:musical-note"
+                        class="w-5 h-5"
                     />
-                </label>
+                    Ajouter Synth
+                </button>
+
+                <div class="flex items-center gap-4">
+                    <button
+                        v-if="!sequencer.isPlaying"
+                        @click="sequencer.start"
+                        class="px-6 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-all duration-200 border border-green-400/20 hover:border-green-400/40 flex items-center gap-2"
+                    >
+                        <Icon
+                            name="heroicons:play"
+                            class="w-5 h-5"
+                        />
+                        Démarrer
+                    </button>
+                    <button
+                        v-else
+                        @click="sequencer.stop"
+                        class="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all duration-200 border border-red-400/20 hover:border-red-400/40 flex items-center gap-2"
+                    >
+                        <Icon
+                            name="heroicons:stop"
+                            class="w-5 h-5"
+                        />
+                        Stop
+                    </button>
+
+                    <label
+                        class="flex items-center gap-2 bg-dark-600/50 px-4 py-2 rounded-lg border border-orange-400/20"
+                    >
+                        <Icon
+                            name="heroicons:clock"
+                            class="w-5 h-5"
+                        />
+                        Tempo
+                        <input
+                            type="number"
+                            v-model="sequencer.tempo"
+                            min="30"
+                            max="300"
+                            class="w-20 text-orange-400 font-bold bg-transparent border-b border-orange-400/20 focus:border-orange-400/40 outline-none px-2 py-1"
+                        />
+                    </label>
+                </div>
             </div>
         </div>
 
