@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from './ui/Button.vue';
+
 const props = defineProps<{
     track: {
         id: number
@@ -18,6 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const localNotes = ref(props.track.notes || Array(16).fill('A'))
+const isCollapsed = ref(false)
 
 watch(() => props.track.notes, (newNotes) => {
     if (newNotes) {
@@ -34,20 +37,53 @@ const tracks = useTracks()
 </script>
 
 <template>
-    <div class="bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-800 font-sans relative">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-white font-bold text-lg tracking-wide">{{ track.name }} | {{ track.id }}</h3>
-            <label class="flex items-center gap-2 text-white text-sm">
-                <input
-                    type="checkbox"
-                    :checked="track.enablePitch"
-                    @change="emit('togglePitch', track.id)"
-                    class="w-4 h-4 rounded border-gray-700 bg-gray-800 text-orange-400 focus:ring-orange-400"
-                />
-                Activer le pitch
-            </label>
+    <div class="bg-gray-900 rounded-xl shadow-lg border border-gray-800 font-sans relative p-x-2">
+        <div
+            class="flex justify-between items-center"
+            :class="isCollapsed ? 'mb-0' : 'mb-4'"
+        >
+            <div class="flex items-center gap-2">
+                <Button
+                    @click="isCollapsed = !isCollapsed"
+                    class="text-white/60 hover:text-white transition-colors"
+                >
+                    <template #icon>
+                        <Icon :name="isCollapsed ? 'heroicons:chevron-down' : 'heroicons:chevron-up'" />
+                    </template>
+                </Button>
+                <h3 class="text-white font-bold text-lg tracking-wide">{{ track.name }} | {{ track.id }}</h3>
+            </div>
+            <div class="flex items-center gap-4">
+                <label
+                    v-if="!isCollapsed"
+                    class="flex items-center gap-2 text-white text-sm"
+                >
+                    <input
+                        type="checkbox"
+                        :checked="track.enablePitch"
+                        @change="emit('togglePitch', track.id)"
+                        class="w-4 h-4 rounded border-gray-700 bg-gray-800 text-orange-400 focus:ring-orange-400"
+                    />
+                    Activer le pitch
+                </label>
+                <button
+                    v-if="!isCollapsed"
+                    @click="tracks.removeTrack(track.id)"
+                    class="p-2 bg-red-500/20 text-red-400 rounded-lg border border-red-400/20"
+                    transition="200 ease-in-out colors"
+                    hover="border-red-400/60 bg-red-500/30"
+                >
+                    <Icon
+                        name="heroicons:trash"
+                        class="w-4 h-4"
+                    />
+                </button>
+            </div>
         </div>
-        <div class="grid grid-cols-6 xs:grid-cols-8 sm:grid-cols-16 gap-2">
+        <div
+            v-if="!isCollapsed"
+            class="grid grid-cols-6 xs:grid-cols-8 sm:grid-cols-16 gap-2 p-2"
+        >
             <div
                 v-for="(active, index) in track.grid"
                 :key="index"
@@ -76,13 +112,5 @@ const tracks = useTracks()
                 </select>
             </div>
         </div>
-        <button
-            @click="tracks.removeTrack(track.id)"
-            class="mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg border border-red-400/20"
-            transition="200 ease-in-out colors"
-            hover="border-red-400/60 bg-red-500/30"
-        >
-            Supprimer
-        </button>
     </div>
 </template>
