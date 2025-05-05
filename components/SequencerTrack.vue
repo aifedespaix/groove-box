@@ -56,20 +56,21 @@ const tracks = useTracks()
             <div class="flex items-center gap-4">
                 <label
                     v-if="!isCollapsed"
-                    class="flex items-center gap-2 text-white text-sm"
+                    class="flex items-center gap-2 text-white text-sm bg-dark-900/75 rounded-md p-2 cursor-pointer"
+                    :class="track.enablePitch ? 'bg-orange-500/20' : 'bg-dark-800/25'"
                 >
                     <input
                         type="checkbox"
                         :checked="track.enablePitch"
                         @change="emit('togglePitch', track.id)"
-                        class="w-4 h-4 rounded border-gray-700 bg-gray-800 text-orange-400 focus:ring-orange-400"
+                        class="w-4 h-4 rounded border-gray-700 bg-gray-800 text-orange-400 focus:ring-orange-400 focus:ring-offset-gray-900 focus:ring-offset-2 cursor-pointer transition-all duration-200 ease-in-out appearance-none checked:bg-orange-400 checked:border-orange-400 hover:border-orange-400/50"
                     />
-                    Activer le pitch
+                    Pitch
                 </label>
                 <button
                     v-if="!isCollapsed"
                     @click="tracks.removeTrack(track.id)"
-                    class="p-2 bg-red-500/20 text-red-400 rounded-lg border border-red-400/20"
+                    class="p-2 bg-red-500/20 text-red-400 rounded-lg border border-red-400/20 cursor-pointer"
                     transition="200 ease-in-out colors"
                     hover="border-red-400/60 bg-red-500/30"
                 >
