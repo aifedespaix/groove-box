@@ -84,6 +84,7 @@ const tracks = useTracks()
         <div
             v-if="!isCollapsed"
             class="grid grid-cols-6 xs:grid-cols-8 sm:grid-cols-16 gap-2 p-2"
+            :class="track.enablePitch ? 'gap-y-8' : ''"
         >
             <div
                 v-for="(active, index) in track.grid"
