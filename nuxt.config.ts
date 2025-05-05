@@ -2,7 +2,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-
+  // ssr: false,
+  nitro: {
+    preset: 'static',
+  },
   modules: [
     '@nuxt/content',
     '@nuxt/eslint',
@@ -11,10 +14,10 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@nuxt/test-utils',
-    '@nuxt/ui',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     '@unocss/nuxt',
+    '@nuxtjs/seo'
   ],
 })

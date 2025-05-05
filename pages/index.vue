@@ -58,13 +58,13 @@ function togglePitch(trackId: number) {
                 >Stop</button>
 
                 <label class="flex items-center gap-2 bg-dark-600/50 px-4 py-2 rounded-lg border border-orange-400/20">
-                    Tempo:
+                    Tempo
                     <input
                         type="number"
                         v-model="sequencer.tempo"
                         min="30"
                         max="300"
-                        class="w-20 bg-transparent border-b border-orange-400/20 focus:border-orange-400/40 outline-none px-2 py-1"
+                        class="w-20 text-orange-400 font-bold bg-transparent border-b border-orange-400/20 focus:border-orange-400/40 outline-none px-2 py-1"
                     />
                 </label>
             </div>

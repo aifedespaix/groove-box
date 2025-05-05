@@ -34,7 +34,7 @@ const tracks = useTracks()
 </script>
 
 <template>
-    <div class="bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-800 font-sans">
+    <div class="bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-800 font-sans relative">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-white font-bold text-lg tracking-wide">{{ track.name }} | {{ track.id }}</h3>
             <label class="flex items-center gap-2 text-white text-sm">
@@ -78,7 +78,9 @@ const tracks = useTracks()
         </div>
         <button
             @click="tracks.removeTrack(track.id)"
-            class="mt-4 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all duration-200 border border-red-400/20 hover:border-red-400/40"
+            class="mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg border border-red-400/20"
+            transition="200 ease-in-out colors"
+            hover="border-red-400/60 bg-red-500/30"
         >
             Supprimer
         </button>
