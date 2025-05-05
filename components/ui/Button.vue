@@ -19,12 +19,18 @@
     >
         <span
             v-if="$slots.icon"
-            class="mr-2 transition-transform group-hover:scale-110"
-            :class="iconPosition === 'right' && 'mr-0 ml-2 order-2'"
+            class="transition-transform group-hover:scale-110"
+            :class="[
+                iconPosition === 'right' ? 'ml-2 order-2' : 'mr-2',
+                !$slots.default && '!mr-0 !ml-0'
+            ]"
         >
             <slot name="icon" />
         </span>
-        <span class="font-medium">
+        <span
+            v-if="$slots.default"
+            class="font-medium"
+        >
             <slot />
         </span>
     </button>
