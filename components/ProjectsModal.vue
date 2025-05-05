@@ -44,14 +44,45 @@
                                 {{ new Date(project.date).toLocaleDateString() }}
                             </div>
                         </div>
-                        <Button
-                            @click="$emit('delete', project.id)"
-                            rounded="full"
-                            variant="danger"
-                        >
-                            <Icon name="heroicons:trash" />
-                        </Button>
+                        <div class="flex items-center gap-2">
+                            <Button
+                                @click="handleExport(project)"
+                                rounded="full"
+                                variant="default"
+                            >
+                                <Icon name="heroicons:arrow-down-tray" />
+                            </Button>
+                            <Button
+                                @click="$emit('delete', project.id)"
+                                rounded="full"
+                                variant="danger"
+                            >
+                                <Icon name="heroicons:trash" />
+                            </Button>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+                <div class="flex gap-2">
+                    <Button @click="handlePaste">
+                        <template #icon>
+                            <Icon name="heroicons:clipboard-document" />
+                        </template>
+                    </Button>
+                    <input
+                        v-model="importText"
+                        type="text"
+                        placeholder="Coller le contenu du projet ici"
+                        class="flex-1 px-3 py-2 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <Button
+                        @click="handleImport"
+                        rounded="full"
+                        variant="default"
+                    >
+                        <Icon name="heroicons:arrow-up-tray" />
+                    </Button>
                 </div>
             </div>
         </div>
@@ -60,6 +91,20 @@
 
 <script lang="ts" setup>
 import Button from './ui/Button.vue';
+import { useToastStore } from '~/stores/toast';
+import { ref } from 'vue';
+import { useProjects } from '~/stores/projects';
+
+const toast = useToastStore();
+const projectsStore = useProjects();
+const importText = ref('');
+
+const emit = defineEmits<{
+    (e: 'close'): void
+    (e: 'load' | 'delete', id: string): void
+    (e: 'export', project: { id: string; name: string; date: string }): void
+    (e: 'import', project: Project): void
+}>()
 
 defineProps<{
     isOpen: boolean
@@ -70,9 +115,39 @@ defineProps<{
     }>
 }>()
 
-defineEmits<{
-    (e: 'close'): void
-    (e: 'load', id: string): void
-    (e: 'delete', id: string): void
-}>()
+const handleExport = (project: Project) => {
+    emit('export', project);
+    // Copie dans le presse-papier
+    navigator.clipboard.writeText(JSON.stringify(project));
+    toast.success(`Le projet "${project.name}" a été enregistré dans le presse-papier.`);
+}
+
+const handlePaste = async () => {
+    if (!importText.value) {
+        try {
+            const text = await navigator.clipboard.readText();
+            importText.value = text;
+        } catch {
+            toast.error('Impossible d\'accéder au presse-papier');
+        }
+    }
+}
+
+const handleImport = () => {
+    try {
+        const project = JSON.parse(importText.value);
+        // Vérifier que le projet a la bonne structure
+        if (!project.id || !project.name || !project.date || !project.tracks) {
+            throw new Error('Format de projet invalide');
+        }
+        // Ajouter le projet au store
+        projectsStore.projects.push(project);
+        // Sauvegarder dans le localStorage
+        localStorage.setItem('groovebox-projects', JSON.stringify(projectsStore.projects));
+        importText.value = '';
+        toast.success('Projet importé avec succès');
+    } catch {
+        toast.error('Format de projet invalide');
+    }
+}
 </script>

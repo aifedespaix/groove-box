@@ -21,7 +21,7 @@
                         <template #icon>
                             <Icon name="heroicons:folder" />
                         </template>
-                        Ouvrir
+                        Projets
                     </Button>
                     <Button
                         @click="handleSaveProject"

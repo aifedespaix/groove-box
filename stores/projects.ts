@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { useTracks } from './tracks'
 import type { Track } from './tracks'
 
-interface Project {
+export interface Project {
     id: string
     name: string
     date: string

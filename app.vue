@@ -16,6 +16,8 @@
       @load="loadProject"
       @delete="deleteProject"
     />
+
+    <ToastNotification />
   </div>
 </template>
 

@@ -12,6 +12,7 @@
             variant === 'default' && 'bg-slate-800/90 hover:bg-slate-700/90 border-slate-700/40 hover:border-slate-600/40',
             variant === 'danger' && 'bg-rose-900/90 hover:bg-rose-800/90 border-rose-800/40 hover:border-rose-700/40',
             variant === 'success' && 'bg-emerald-900/90 hover:bg-emerald-800/90 border-emerald-800/40 hover:border-emerald-700/40',
+            variant === 'ghost' && 'bg-transparent hover:bg-dark/10 border-none',
             size === 'sm' && 'text-sm px-3 py-1.5',
             size === 'lg' && 'text-lg px-6 py-3',
         ]"
@@ -38,7 +39,7 @@
 
 <script lang="ts" setup>
 withDefaults(defineProps<{
-    variant?: 'default' | 'danger' | 'success'
+    variant?: 'default' | 'danger' | 'success' | 'ghost'
     size?: 'sm' | 'md' | 'lg'
     iconPosition?: 'left' | 'right'
     rounded?: 'none' | 'sm' | 'md' | 'lg' | 'full'
