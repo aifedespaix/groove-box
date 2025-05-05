@@ -47,7 +47,7 @@ const tracks = useTracks()
                 Activer le pitch
             </label>
         </div>
-        <div class="grid grid-cols-16 gap-2">
+        <div class="grid grid-cols-6 xs:grid-cols-8 sm:grid-cols-16 gap-2">
             <div
                 v-for="(active, index) in track.grid"
                 :key="index"
