@@ -13,11 +13,79 @@ export const useProjects = defineStore('projects', () => {
     const projects = ref<Project[]>([])
     const tracksStore = useTracks()
 
+    // Créer un projet de base
+    function createDefaultProject() {
+        const project: Project = {
+            id: crypto.randomUUID(),
+            name: 'Projet de base',
+            date: new Date().toISOString(),
+            tracks: []
+        }
+
+        // Ajouter les tracks de base
+        tracksStore.addTrack('Kick', 'kick')
+        tracksStore.addTrack('Snare', 'snare')
+        tracksStore.addTrack('HiHat', 'hihat')
+        tracksStore.addTrack('Lead', 'lead')
+
+        // Configurer les patterns de base
+        const kickTrack = tracksStore.tracks[0]
+        const snareTrack = tracksStore.tracks[1]
+        const hihatTrack = tracksStore.tracks[2]
+        const leadTrack = tracksStore.tracks[3]
+
+        // Pattern de kick (4/4)
+        kickTrack.grid = [
+            true, false, false, false,
+            true, false, false, false,
+            true, false, false, false,
+            true, false, false, false
+        ]
+
+        // Pattern de snare (2/4)
+        snareTrack.grid = [
+            false, false, true, false,
+            false, false, true, false,
+            false, false, true, false,
+            false, false, true, false
+        ]
+
+        // Pattern de hihat (8/8)
+        hihatTrack.grid = [
+            true, false, true, false,
+            true, false, true, false,
+            true, false, true, false,
+            true, false, true, false
+        ]
+
+        // Pattern de lead (mélodie simple)
+        leadTrack.grid = [
+            true, false, false, false,
+            false, false, true, false,
+            false, false, false, false,
+            true, false, false, false
+        ]
+        leadTrack.notes = [
+            'C', 'A', 'A', 'A',
+            'A', 'A', 'G', 'A',
+            'A', 'A', 'A', 'A',
+            'F', 'A', 'A', 'A'
+        ]
+
+        project.tracks = [...tracksStore.tracks]
+        projects.value.push(project)
+        localStorage.setItem('groovebox-projects', JSON.stringify(projects.value))
+    }
+
     // Charger les projets depuis le localStorage au démarrage
     onMounted(() => {
         const savedProjects = localStorage.getItem('groovebox-projects')
-        if (savedProjects) {
+        if (savedProjects && savedProjects !== '[]') {
+            console.log('Loading projects from localStorage', savedProjects.length, savedProjects)
             projects.value = JSON.parse(savedProjects)
+        } else {
+            console.log('Creating default project')
+            createDefaultProject()
         }
     })
 

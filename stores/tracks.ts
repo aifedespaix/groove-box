@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export type InstrumentType = 'kick' | 'snare' | 'hihat' | 'lead'
 
-interface Track {
+export interface Track {
     id: number
     name: string
     type: InstrumentType

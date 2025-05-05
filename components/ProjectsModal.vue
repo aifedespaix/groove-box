@@ -33,17 +33,19 @@
                     <div
                         v-for="project in projects"
                         :key="project.id"
-                        class="flex items-center justify-between p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors border border-gray-800"
-                        @click="$emit('load', project.id)"
+                        class="flex items-center justify-between p-3 hover:bg-gray-800 rounded-lg transition-colors border border-gray-800"
                     >
-                        <div>
+                        <div
+                            class="flex-1 cursor-pointer"
+                            @click="$emit('load', project.id)"
+                        >
                             <div class="font-medium text-white">{{ project.name }}</div>
                             <div class="text-sm text-gray-400">
                                 {{ new Date(project.date).toLocaleDateString() }}
                             </div>
                         </div>
                         <Button
-                            @click.stop="$emit('delete', project.id)"
+                            @click="$emit('delete', project.id)"
                             rounded="full"
                             variant="danger"
                         >
