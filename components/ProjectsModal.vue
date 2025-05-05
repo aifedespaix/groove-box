@@ -37,14 +37,42 @@
                     >
                         <div
                             class="flex-1 cursor-pointer"
-                            @click="$emit('load', project.id)"
+                            @click.prevent.stop="!isEditing[project.id] && $emit('load', project.id)"
                         >
-                            <div class="font-medium text-white">{{ project.name }}</div>
+                            <div
+                                v-if="!isEditing[project.id]"
+                                class="font-medium text-white"
+                            >{{ project.name }}</div>
+                            <div
+                                v-else
+                                class="flex items-center gap-2"
+                            >
+                                <input
+                                    v-model="editedNames[project.id]"
+                                    type="text"
+                                    class="px-2 py-1 bg-gray-800 text-white rounded border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <Button
+                                    @click.stop="handleSaveName(project)"
+                                    rounded="full"
+                                    class="p-1"
+                                >
+                                    <Icon name="heroicons:check" />
+                                </Button>
+                            </div>
                             <div class="text-sm text-gray-400">
                                 {{ new Date(project.date).toLocaleDateString() }}
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <Button
+                                v-if="!isEditing[project.id]"
+                                @click="startEditing(project)"
+                                rounded="full"
+                                variant="default"
+                            >
+                                <Icon name="heroicons:pencil-square" />
+                            </Button>
                             <Button
                                 @click="handleExport(project)"
                                 rounded="full"
@@ -104,16 +132,16 @@ const emit = defineEmits<{
     (e: 'load' | 'delete', id: string): void
     (e: 'export', project: { id: string; name: string; date: string }): void
     (e: 'import', project: Project): void
+    (e: 'update-name', id: string, newName: string): void
 }>()
 
 defineProps<{
     isOpen: boolean
-    projects: Array<{
-        id: string
-        name: string
-        date: string
-    }>
+    projects: Project[]
 }>()
+
+const isEditing = ref<Record<string, boolean>>({});
+const editedNames = ref<Record<string, string>>({});
 
 const handleExport = (project: Project) => {
     emit('export', project);
@@ -141,13 +169,23 @@ const handleImport = () => {
             throw new Error('Format de projet invalide');
         }
         // Ajouter le projet au store
-        projectsStore.projects.push(project);
-        // Sauvegarder dans le localStorage
-        localStorage.setItem('groovebox-projects', JSON.stringify(projectsStore.projects));
+        projectsStore.importProject(project);
         importText.value = '';
         toast.success('Projet importé avec succès');
     } catch {
         toast.error('Format de projet invalide');
     }
 }
+
+const startEditing = (project: Project) => {
+    isEditing.value[project.id] = true;
+    editedNames.value[project.id] = project.name;
+};
+
+const handleSaveName = (project: Project) => {
+    if (editedNames.value[project.id]?.trim()) {
+        projectsStore.updateProjectName(project.id, editedNames.value[project.id]);
+        isEditing.value[project.id] = false;
+    }
+};
 </script>

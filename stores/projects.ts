@@ -116,10 +116,26 @@ export const useProjects = defineStore('projects', () => {
         localStorage.setItem('groovebox-projects', JSON.stringify(projects.value))
     }
 
+    function updateProjectName(id: string, newName: string) {
+        const project = projects.value.find(p => p.id === id)
+        if (project) {
+            project.name = newName
+            localStorage.setItem('groovebox-projects', JSON.stringify(projects.value))
+        }
+    }
+
+    function importProject(project: Project) {
+        project.id = crypto.randomUUID()
+        project.date = new Date().toISOString()
+        projects.value.push(project)
+    }
+
     return {
         projects,
         saveProject,
         loadProject,
-        deleteProject
+        deleteProject,
+        updateProjectName,
+        importProject
     }
 }) 

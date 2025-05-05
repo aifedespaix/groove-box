@@ -1,23 +1,20 @@
 <template>
-    <button
-        :class="[
-            'group relative inline-flex items-center justify-center px-4 py-2 transition-all duration-200',
-            rounded === 'none' ? 'rounded-none' : rounded === 'sm' ? 'rounded-sm' : rounded === 'lg' ? 'rounded-lg' : 'rounded-full',
-            'backdrop-blur-sm',
-            'border',
-            'shadow-[0_2px_8px_-1px_rgba(0,0,0,0.2)] hover:shadow-[0_4px_12px_-1px_rgba(0,0,0,0.3)]',
-            'active:scale-95',
-            'text-slate-100',
-            'cursor-pointer',
-            variant === 'default' && 'bg-slate-800/90 hover:bg-slate-700/90 border-slate-700/40 hover:border-slate-600/40',
-            variant === 'danger' && 'bg-rose-900/90 hover:bg-rose-800/90 border-rose-800/40 hover:border-rose-700/40',
-            variant === 'success' && 'bg-emerald-900/90 hover:bg-emerald-800/90 border-emerald-800/40 hover:border-emerald-700/40',
-            variant === 'ghost' && 'bg-transparent hover:bg-dark/10 border-none',
-            size === 'sm' && 'text-sm px-3 py-1.5',
-            size === 'lg' && 'text-lg px-6 py-3',
-        ]"
-        @click="$emit('click')"
-    >
+    <button :class="[
+        'group relative inline-flex items-center justify-center px-4 py-2 transition-all duration-200',
+        rounded === 'none' ? 'rounded-none' : rounded === 'sm' ? 'rounded-sm' : rounded === 'lg' ? 'rounded-lg' : 'rounded-full',
+        'backdrop-blur-sm',
+        'border',
+        'shadow-[0_2px_8px_-1px_rgba(0,0,0,0.2)] hover:shadow-[0_4px_12px_-1px_rgba(0,0,0,0.3)]',
+        'active:scale-95',
+        'text-slate-100',
+        'cursor-pointer',
+        variant === 'default' && 'bg-slate-800/90 hover:bg-slate-700/90 border-slate-700/40 hover:border-slate-600/40',
+        variant === 'danger' && 'bg-rose-900/90 hover:bg-rose-800/90 border-rose-800/40 hover:border-rose-700/40',
+        variant === 'success' && 'bg-emerald-900/90 hover:bg-emerald-800/90 border-emerald-800/40 hover:border-emerald-700/40',
+        variant === 'ghost' && 'bg-transparent hover:bg-dark/10 border-none',
+        size === 'sm' && 'text-sm px-3 py-1.5',
+        size === 'lg' && 'text-lg px-6 py-3',
+    ]">
         <span
             v-if="$slots.icon"
             class="transition-transform group-hover:scale-110"
@@ -50,7 +47,4 @@ withDefaults(defineProps<{
     rounded: 'md'
 })
 
-defineEmits<{
-    (e: 'click'): void
-}>()
 </script>
