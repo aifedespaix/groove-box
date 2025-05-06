@@ -25,7 +25,7 @@ const sampleUrls: Record<InstrumentType, string | null> = {
 export const useTracks = defineStore('tracks', () => {
     const tracks = ref<Track[]>([])
     const stepsPerTrack = ref(16)
-    const groupLength = ref(8)
+    const groupLength = ref(4)
 
     const trackId = computed(() => {
         return tracks.value.length + 1
@@ -80,8 +80,8 @@ export const useTracks = defineStore('tracks', () => {
             name,
             type,
             grid: Array(stepsPerTrack.value).fill(false),
-            notes: type === 'lead' ? Array(stepsPerTrack.value).fill('A') : undefined,
-            enablePitch: type === 'lead',
+            notes: Array(stepsPerTrack.value).fill('A'),
+            enablePitch: false,
             loopFrom: 0,
             loopTo: 8,
             loopModulo: 1,
@@ -161,7 +161,7 @@ export const useTracks = defineStore('tracks', () => {
 
     function updateNote(trackId: number, step: number, note: string) {
         const track = tracks.value.find(t => t.id === trackId)
-        if (track && track.type === 'lead' && track.notes) {
+        if (track && track.notes) {
             track.notes[step] = note
         }
     }
@@ -184,6 +184,49 @@ export const useTracks = defineStore('tracks', () => {
         }
     }
 
+    function duplicateTrack(trackId: number) {
+        const track = tracks.value.find(t => t.id === trackId)
+        if (track) {
+            addTrack(`${track.name} (copie)`, track.type)
+            const newTrack = tracks.value[tracks.value.length - 1]
+            newTrack.grid = [...track.grid]
+            newTrack.notes = track.notes ? [...track.notes] : undefined
+            newTrack.enablePitch = track.enablePitch
+            newTrack.loopFrom = track.loopFrom
+            newTrack.loopTo = track.loopTo
+            newTrack.loopModulo = track.loopModulo
+            newTrack.loopGap = track.loopGap
+        }
+    }
+
+    const orderedTracks = computed(() => {
+        return [...tracks.value].sort((a, b) => {
+            // Premier critère : loopFrom
+            if (a.loopFrom !== b.loopFrom) {
+                return a.loopFrom - b.loopFrom
+            }
+
+            // Deuxième critère : durée potentielle (loopTo - loopFrom)
+            const durationA = a.loopTo - a.loopFrom
+            const durationB = b.loopTo - b.loopFrom
+            if (durationA !== durationB) {
+                return durationA - durationB
+            }
+
+            // Troisième critère : nom
+            if (a.name !== b.name) {
+                return a.name.localeCompare(b.name)
+            }
+
+            // Quatrième critère : loopModulo
+            if (a.loopModulo !== b.loopModulo) {
+                return a.loopModulo - b.loopModulo
+            }
+
+            // Cinquième critère : loopGap
+            return a.loopGap - b.loopGap
+        })
+    })
 
     return {
         tracks,
@@ -196,7 +239,9 @@ export const useTracks = defineStore('tracks', () => {
         updateNote,
         togglePitch,
         updateLoop,
-        groupLength
+        groupLength,
+        duplicateTrack,
+        orderedTracks
     }
 }, {
     persist: true

@@ -57,7 +57,8 @@ function updateLoopGap(event: Event) {
         :class="[sequencer.shouldPlay(track) ? 'border-yellow/50' : 'border-dark-500']"
     >
         <div
-            class="flex justify-between items-center"
+            class="grid grid-cols-1 gap-2"
+            sm="grid-cols-3"
             :class="isCollapsed ? 'mb-0' : 'mb-4'"
         >
             <div class="flex items-center gap-2">
@@ -71,13 +72,19 @@ function updateLoopGap(event: Event) {
                 </Button>
                 <h3 class="text-white font-bold text-lg tracking-wide">{{ track.name }} | {{ track.id }}</h3>
             </div>
-            <div class="flex items-center gap-4">
+            <div
+                class="grid grid-cols-2 gap-2"
+                sm="grid-cols-2"
+                md="grid-cols-4"
+            >
                 <UiInput
                     v-if="!isCollapsed"
                     :model-value="track.loopFrom"
                     @change="updateLoopFrom"
                     type="number"
                     placeholder="From"
+                    :min="0"
+                    :max="track.loopTo"
                 />
                 <UiInput
                     v-if="!isCollapsed"
@@ -85,6 +92,8 @@ function updateLoopGap(event: Event) {
                     @change="updateLoopTo"
                     type="number"
                     placeholder="From"
+                    :min="track.loopFrom"
+                    :max="tracksStore.stepsPerTrack"
                 />
                 <UiInput
                     v-if="!isCollapsed"
@@ -92,6 +101,8 @@ function updateLoopGap(event: Event) {
                     @change="updateLoopModulo"
                     type="number"
                     placeholder="Modulo"
+                    :min="1"
+                    :max="tracksStore.stepsPerTrack"
                 />
                 <UiInput
                     v-if="!isCollapsed"
@@ -99,7 +110,16 @@ function updateLoopGap(event: Event) {
                     @change="updateLoopGap"
                     type="number"
                     placeholder="Gap"
+                    :min="0"
+                    :max="tracksStore.stepsPerTrack"
                 />
+            </div>
+            <div
+                class="grid grid-cols-3 gap-2"
+                sm="grid-cols-2"
+                md="grid-cols-3"
+            >
+
                 <label
                     v-if="!isCollapsed"
                     class="flex items-center gap-2 text-white text-sm bg-dark-900/75 rounded-md p-2 cursor-pointer"
@@ -125,15 +145,30 @@ function updateLoopGap(event: Event) {
                         class="w-4 h-4"
                     />
                 </button>
+                <button
+                    v-if="!isCollapsed"
+                    @click="tracks.duplicateTrack(track.id)"
+                    class="p-2 bg-blue-500/20 text-blue-400 rounded-lg border border-blue-400/20 cursor-pointer"
+                    transition="200 ease-in-out colors"
+                    hover="border-blue-400/60 bg-blue-500/30"
+                >
+                    <Icon
+                        name="heroicons:document-duplicate"
+                        class="w-4 h-4"
+                    />
+                </button>
             </div>
         </div>
         <div
             v-if="!isCollapsed"
-            class="grid grid-cols-4 gap-4 p-2"
+            class="grid grid-cols-1 gap-4 p-2"
+            xs="grid-cols-2"
+            sm="grid-cols-3"
+            md="grid-cols-4"
             :class="track.enablePitch ? 'gap-y-8' : ''"
         >
             <div
-                v-for="(group, groupIndex) in Array.from({ length: tracksStore.groupLength })"
+                v-for="(group, groupIndex) in Array.from({ length: track.grid.length / tracksStore.groupLength })"
                 :key="groupIndex"
                 class="bg-gray-800/50 p-2 rounded-lg"
             >

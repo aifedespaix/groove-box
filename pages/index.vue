@@ -24,9 +24,6 @@ function togglePitch(trackId: number) {
     tracks.togglePitch(trackId)
 }
 
-function updateLoop(trackId: number, loop: number) {
-    tracks.updateLoop(trackId, loop)
-}
 </script>
 
 <template>
@@ -106,14 +103,13 @@ function updateLoop(trackId: number, loop: number) {
 
         <div class="tracks mt-8 space-y-6">
             <SequencerTrack
-                v-for="track in tracks.tracks"
+                v-for="track in tracks.orderedTracks"
                 :key="track.id"
                 :track="track"
                 :current-step="sequencer.currentStep"
                 @toggle-step="toggleStep"
                 @update-note="updateNote"
                 @toggle-pitch="togglePitch"
-                @update-loop="updateLoop"
             />
         </div>
     </div>
