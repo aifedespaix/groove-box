@@ -81,10 +81,8 @@ export const useProjects = defineStore('projects', () => {
     onMounted(() => {
         const savedProjects = localStorage.getItem('groovebox-projects')
         if (savedProjects && savedProjects !== '[]') {
-            console.log('Loading projects from localStorage', savedProjects.length, savedProjects)
             projects.value = JSON.parse(savedProjects)
         } else {
-            console.log('Creating default project')
             createDefaultProject()
         }
     })

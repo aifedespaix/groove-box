@@ -85,7 +85,6 @@ export const useTracks = defineStore('tracks', () => {
             const gain = audioCtx.createGain()
 
             const note = track.notes?.[step] || 'A'
-            console.log('Playing note:', note, 'at frequency:', noteFrequencies[note])
 
             osc.type = 'sawtooth'
             osc.frequency.value = noteFrequencies[note]
