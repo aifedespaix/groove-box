@@ -2,14 +2,7 @@
 import Button from './ui/Button.vue';
 
 const props = defineProps<{
-    track: {
-        id: number
-        name: string
-        type: string
-        grid: boolean[]
-        notes?: string[]
-        enablePitch?: boolean
-    }
+    track: Track
     currentStep: number
 }>()
 
@@ -18,6 +11,9 @@ const emit = defineEmits<{
     (e: 'updateNote', trackId: number, step: number, note: string): void
     (e: 'togglePitch', trackId: number): void
 }>()
+
+const sequencer = useSequencer()
+const tracksStore = useTracks()
 
 const localNotes = ref(props.track.notes || Array(16).fill('A'))
 const isCollapsed = ref(false)
@@ -34,10 +30,28 @@ function toggleStep(step: number) {
 
 const tracks = useTracks()
 
+function updateLoopFrom(event: Event) {
+    const target = event.target as HTMLInputElement
+    tracksStore.updateLoop(props.track.id, { loopFrom: Number(target.value) })
+}
+
+function updateLoopTo(event: Event) {
+    const target = event.target as HTMLInputElement
+    tracksStore.updateLoop(props.track.id, { loopTo: Number(target.value) })
+}
+
+function updateLoopModulo(event: Event) {
+    const target = event.target as HTMLInputElement
+    tracksStore.updateLoop(props.track.id, { loopModulo: Number(target.value) })
+}
+
 </script>
 
 <template>
-    <div class="bg-gray-900 rounded-xl shadow-lg border border-gray-800 font-sans relative p-x-2">
+    <div
+        class="bg-gray-900 rounded-xl shadow-lg border border-solid font-sans relative p-x-2"
+        :class="[sequencer.shouldPlay(track) ? 'border-yellow/50' : 'border-dark-500']"
+    >
         <div
             class="flex justify-between items-center"
             :class="isCollapsed ? 'mb-0' : 'mb-4'"
@@ -54,6 +68,27 @@ const tracks = useTracks()
                 <h3 class="text-white font-bold text-lg tracking-wide">{{ track.name }} | {{ track.id }}</h3>
             </div>
             <div class="flex items-center gap-4">
+                <UiInput
+                    v-if="!isCollapsed"
+                    :value="track.loopFrom"
+                    @change="updateLoopFrom"
+                    type="number"
+                    placeholder="From"
+                />
+                <UiInput
+                    v-if="!isCollapsed"
+                    :model-value="track.loopTo"
+                    @change="updateLoopTo"
+                    type="number"
+                    placeholder="From"
+                />
+                <UiInput
+                    v-if="!isCollapsed"
+                    :model-value="track.loopModulo"
+                    @change="updateLoopModulo"
+                    type="number"
+                    placeholder="Modulo"
+                />
                 <label
                     v-if="!isCollapsed"
                     class="flex items-center gap-2 text-white text-sm bg-dark-900/75 rounded-md p-2 cursor-pointer"
@@ -92,7 +127,7 @@ const tracks = useTracks()
                 class="relative w-8 h-8 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer transform hover:scale-105 active:scale-95"
                 :class="[
                     active ? 'bg-emerald-500 hover:bg-emerald-400 shadow-lg shadow-emerald-500/30' : 'bg-gray-800 hover:bg-gray-700',
-                    currentStep === index ? 'ring-2 ring-red-500 animate-pulse' : ''
+                    sequencer.relativeStep === index ? 'ring-2 ring-red-500 animate-pulse' : ''
                 ]"
                 @click="toggleStep(index)"
             >

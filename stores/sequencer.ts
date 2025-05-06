@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia'
 
 export const useSequencer = defineStore('sequencer', () => {
+    const tracks = useTracks()
     const tempo = ref(120)
     const swing = ref(0)
     const currentStep = ref(0)
     const isPlaying = ref(false)
+    const loopLength = ref(8)
+
+    const currentLoop = computed(() => Math.floor(currentStep.value / tracks.stepsPerTrack))
+    const relativeStep = computed(() => currentStep.value % tracks.stepsPerTrack)
 
     let sequencerInterval: number | null = null
 
@@ -31,14 +36,21 @@ export const useSequencer = defineStore('sequencer', () => {
     }
 
     function tick() {
-        const tracks = useTracks()
         tracks.tracks.forEach(track => {
-            if (track.grid[currentStep.value]) {
-                tracks.triggerTrack(track, currentStep.value)
+            if (!shouldPlay(track)) return
+            if (track.grid[currentStep.value % tracks.stepsPerTrack]) {
+                tracks.triggerTrack(track, currentStep.value % tracks.stepsPerTrack)
             }
         })
 
-        currentStep.value = (currentStep.value + 1) % useTracks().stepsPerTrack
+        currentStep.value = (currentStep.value + 1) % (tracks.stepsPerTrack * loopLength.value)
+    }
+
+    function shouldPlay(track: Track) {
+        if (track.loopFrom > currentLoop.value) return false
+        if (track.loopTo < currentLoop.value) return false
+        if (currentLoop.value % track.loopModulo !== 0) return false
+        return true
     }
 
     watch(tempo, () => {
@@ -52,7 +64,11 @@ export const useSequencer = defineStore('sequencer', () => {
         currentStep,
         isPlaying,
         start,
-        stop
+        stop,
+        currentLoop,
+        relativeStep,
+        shouldPlay,
+        loopLength
     }
 })
 

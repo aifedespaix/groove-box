@@ -9,6 +9,9 @@ export interface Track {
     grid: boolean[]
     notes?: string[]
     enablePitch?: boolean
+    loopFrom: number
+    loopTo: number
+    loopModulo: number
 }
 
 const sampleUrls: Record<InstrumentType, string | null> = {
@@ -20,7 +23,7 @@ const sampleUrls: Record<InstrumentType, string | null> = {
 
 export const useTracks = defineStore('tracks', () => {
     const tracks = ref<Track[]>([])
-    const stepsPerTrack = 16
+    const stepsPerTrack = ref(16)
 
     const trackId = computed(() => {
         return tracks.value.length + 1
@@ -31,6 +34,16 @@ export const useTracks = defineStore('tracks', () => {
         snare: null,
         hihat: null,
         lead: null,
+    }
+
+    const noteFrequencies: Record<string, number> = {
+        'A': 440,
+        'B': 493.88,
+        'C': 523.25,
+        'D': 587.33,
+        'E': 659.25,
+        'F': 698.46,
+        'G': 783.99
     }
 
     async function loadSamples() {
@@ -52,9 +65,12 @@ export const useTracks = defineStore('tracks', () => {
             id: trackId.value,
             name,
             type,
-            grid: Array(stepsPerTrack).fill(false),
-            notes: Array(stepsPerTrack).fill('A'),
-            enablePitch: type === 'lead'
+            grid: Array(stepsPerTrack.value).fill(false),
+            notes: type === 'lead' ? Array(stepsPerTrack.value).fill('A') : undefined,
+            enablePitch: type === 'lead',
+            loopFrom: 0,
+            loopTo: 8,
+            loopModulo: 1
         })
     }
 
@@ -65,54 +81,52 @@ export const useTracks = defineStore('tracks', () => {
         }
     }
 
+    function triggerLead(track: Track, step: number, audioCtx: AudioContext) {
+        const osc = audioCtx.createOscillator()
+        const gain = audioCtx.createGain()
+
+        const note = track.notes?.[step] || 'A'
+
+        osc.type = 'sawtooth'
+        osc.frequency.value = noteFrequencies[note]
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2)
+
+        osc.connect(gain)
+        gain.connect(audioCtx.destination)
+
+        osc.start()
+        osc.stop(audioCtx.currentTime + 0.2)
+    }
+
+    function triggerSample(track: Track, step: number, audioCtx: AudioContext) {
+        const buffer = sampleBuffers[track.type]
+        if (buffer) {
+            const source = audioCtx.createBufferSource()
+            source.buffer = buffer
+
+            if (track.enablePitch && track.notes) {
+                const note = track.notes[step] || 'A'
+                const baseFrequency = 440 // Fréquence de base (A4)
+                const targetFrequency = noteFrequencies[note]
+                const playbackRate = targetFrequency / baseFrequency
+                source.playbackRate.value = playbackRate
+            }
+
+            source.connect(audioCtx.destination)
+            source.start()
+        }
+    }
+
     function triggerTrack(track: Track, step: number) {
         const audioEngine = useAudioEngine()
         const audioCtx = audioEngine.getContext()
         if (!audioCtx) return
 
-        const noteFrequencies: Record<string, number> = {
-            'A': 440,
-            'B': 493.88,
-            'C': 523.25,
-            'D': 587.33,
-            'E': 659.25,
-            'F': 698.46,
-            'G': 783.99
-        }
-
         if (track.type === 'lead') {
-            const osc = audioCtx.createOscillator()
-            const gain = audioCtx.createGain()
-
-            const note = track.notes?.[step] || 'A'
-
-            osc.type = 'sawtooth'
-            osc.frequency.value = noteFrequencies[note]
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2)
-
-            osc.connect(gain)
-            gain.connect(audioCtx.destination)
-
-            osc.start()
-            osc.stop(audioCtx.currentTime + 0.2)
+            triggerLead(track, step, audioCtx)
         } else {
-            const buffer = sampleBuffers[track.type]
-            if (buffer) {
-                const source = audioCtx.createBufferSource()
-                source.buffer = buffer
-
-                if (track.enablePitch && track.notes) {
-                    const note = track.notes[step] || 'A'
-                    const baseFrequency = 440 // Fréquence de base (A4)
-                    const targetFrequency = noteFrequencies[note]
-                    const playbackRate = targetFrequency / baseFrequency
-                    source.playbackRate.value = playbackRate
-                }
-
-                source.connect(audioCtx.destination)
-                source.start()
-            }
+            triggerSample(track, step, audioCtx)
         }
     }
 
@@ -121,7 +135,7 @@ export const useTracks = defineStore('tracks', () => {
         if (track) {
             track.enablePitch = !track.enablePitch
             if (track.enablePitch && !track.notes) {
-                track.notes = Array(stepsPerTrack).fill('A')
+                track.notes = Array(stepsPerTrack.value).fill('A')
             }
         }
     }
@@ -137,6 +151,22 @@ export const useTracks = defineStore('tracks', () => {
         }
     }
 
+    function updateLoop(trackId: number, loop: { loopFrom?: number, loopTo?: number, loopModulo?: number }) {
+        const track = tracks.value.find(t => t.id === trackId)
+        if (track) {
+            if (loop.loopFrom) {
+                track.loopFrom = loop.loopFrom
+            }
+            if (loop.loopTo) {
+                track.loopTo = loop.loopTo
+            }
+            if (loop.loopModulo) {
+                track.loopModulo = loop.loopModulo
+            }
+        }
+    }
+
+
     return {
         tracks,
         addTrack,
@@ -147,6 +177,7 @@ export const useTracks = defineStore('tracks', () => {
         removeTrack,
         updateNote,
         togglePitch,
+        updateLoop,
     }
 }, {
     persist: true
