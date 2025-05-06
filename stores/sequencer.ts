@@ -49,7 +49,7 @@ export const useSequencer = defineStore('sequencer', () => {
     function shouldPlay(track: Track) {
         if (track.loopFrom > currentLoop.value) return false
         if (track.loopTo < currentLoop.value) return false
-        if (currentLoop.value % track.loopModulo !== 0) return false
+        if ((currentLoop.value + track.loopGap) % track.loopModulo !== 0) return false
         return true
     }
 

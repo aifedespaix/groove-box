@@ -45,6 +45,10 @@ function updateLoopModulo(event: Event) {
     tracksStore.updateLoop(props.track.id, { loopModulo: Number(target.value) })
 }
 
+function updateLoopGap(event: Event) {
+    const target = event.target as HTMLInputElement
+    tracksStore.updateLoop(props.track.id, { loopGap: Number(target.value) })
+}
 </script>
 
 <template>
@@ -70,7 +74,7 @@ function updateLoopModulo(event: Event) {
             <div class="flex items-center gap-4">
                 <UiInput
                     v-if="!isCollapsed"
-                    :value="track.loopFrom"
+                    :model-value="track.loopFrom"
                     @change="updateLoopFrom"
                     type="number"
                     placeholder="From"
@@ -88,6 +92,13 @@ function updateLoopModulo(event: Event) {
                     @change="updateLoopModulo"
                     type="number"
                     placeholder="Modulo"
+                />
+                <UiInput
+                    v-if="!isCollapsed"
+                    :model-value="track.loopGap"
+                    @change="updateLoopGap"
+                    type="number"
+                    placeholder="Gap"
                 />
                 <label
                     v-if="!isCollapsed"
@@ -118,35 +129,43 @@ function updateLoopModulo(event: Event) {
         </div>
         <div
             v-if="!isCollapsed"
-            class="grid grid-cols-6 xs:grid-cols-8 sm:grid-cols-16 gap-2 p-2"
+            class="grid grid-cols-4 gap-4 p-2"
             :class="track.enablePitch ? 'gap-y-8' : ''"
         >
             <div
-                v-for="(active, index) in track.grid"
-                :key="index"
-                class="relative w-8 h-8 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer transform hover:scale-105 active:scale-95"
-                :class="[
-                    active ? 'bg-emerald-500 hover:bg-emerald-400 shadow-lg shadow-emerald-500/30' : 'bg-gray-800 hover:bg-gray-700',
-                    sequencer.relativeStep === index ? 'ring-2 ring-red-500 animate-pulse' : ''
-                ]"
-                @click="toggleStep(index)"
+                v-for="(group, groupIndex) in Array.from({ length: tracksStore.groupLength })"
+                :key="groupIndex"
+                class="bg-gray-800/50 p-2 rounded-lg"
             >
-                <span class="text-xs font-bold text-white/90">{{ index + 1 }}</span>
-                <select
-                    v-if="track.enablePitch && active"
-                    v-model="localNotes[index]"
-                    @click.stop
-                    @change="emit('updateNote', track.id, index, localNotes[index])"
-                    class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-1 py-0.5 rounded border border-gray-700 focus:outline-none focus:border-orange-400"
-                >
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                    <option value="G">G</option>
-                </select>
+                <div class="grid grid-cols-4 gap-2">
+                    <div
+                        v-for="(active, index) in track.grid.slice(groupIndex * 4, (groupIndex + 1) * 4)"
+                        :key="index"
+                        class="relative w-8 h-8 rounded-lg transition-all duration-200 flex items-center justify-center cursor-pointer transform hover:scale-105 active:scale-95"
+                        :class="[
+                            active ? 'bg-emerald-500 hover:bg-emerald-400 shadow-lg shadow-emerald-500/30' : 'bg-gray-800 hover:bg-gray-700',
+                            sequencer.relativeStep === (groupIndex * 4 + index) ? 'ring-2 ring-red-500 animate-pulse' : ''
+                        ]"
+                        @click="toggleStep(groupIndex * 4 + index)"
+                    >
+                        <span class="text-xs font-bold text-white/90">{{ groupIndex * 4 + index + 1 }}</span>
+                        <select
+                            v-if="track.enablePitch && active"
+                            v-model="localNotes[groupIndex * 4 + index]"
+                            @click.stop
+                            @change="emit('updateNote', track.id, groupIndex * 4 + index, localNotes[groupIndex * 4 + index])"
+                            class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-1 py-0.5 rounded border border-gray-700 focus:outline-none focus:border-orange-400"
+                        >
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

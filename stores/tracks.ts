@@ -12,6 +12,7 @@ export interface Track {
     loopFrom: number
     loopTo: number
     loopModulo: number
+    loopGap: number
 }
 
 const sampleUrls: Record<InstrumentType, string | null> = {
@@ -24,9 +25,22 @@ const sampleUrls: Record<InstrumentType, string | null> = {
 export const useTracks = defineStore('tracks', () => {
     const tracks = ref<Track[]>([])
     const stepsPerTrack = ref(16)
+    const groupLength = ref(8)
 
     const trackId = computed(() => {
         return tracks.value.length + 1
+    })
+
+    watch(stepsPerTrack, () => {
+        if (stepsPerTrack.value > tracks.value[0].grid.length) {
+            tracks.value.forEach(track => {
+                track.grid.push(...Array(stepsPerTrack.value - track.grid.length).fill(false))
+            })
+        } else {
+            tracks.value.forEach(track => {
+                track.grid = track.grid.slice(0, stepsPerTrack.value)
+            })
+        }
     })
 
     const sampleBuffers: Record<InstrumentType, AudioBuffer | null> = {
@@ -70,7 +84,8 @@ export const useTracks = defineStore('tracks', () => {
             enablePitch: type === 'lead',
             loopFrom: 0,
             loopTo: 8,
-            loopModulo: 1
+            loopModulo: 1,
+            loopGap: 0
         })
     }
 
@@ -151,7 +166,7 @@ export const useTracks = defineStore('tracks', () => {
         }
     }
 
-    function updateLoop(trackId: number, loop: { loopFrom?: number, loopTo?: number, loopModulo?: number }) {
+    function updateLoop(trackId: number, loop: { loopFrom?: number, loopTo?: number, loopModulo?: number, loopGap?: number }) {
         const track = tracks.value.find(t => t.id === trackId)
         if (track) {
             if (loop.loopFrom) {
@@ -162,6 +177,9 @@ export const useTracks = defineStore('tracks', () => {
             }
             if (loop.loopModulo) {
                 track.loopModulo = loop.loopModulo
+            }
+            if (loop.loopGap) {
+                track.loopGap = loop.loopGap
             }
         }
     }
@@ -178,6 +196,7 @@ export const useTracks = defineStore('tracks', () => {
         updateNote,
         togglePitch,
         updateLoop,
+        groupLength
     }
 }, {
     persist: true
