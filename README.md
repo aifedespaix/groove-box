@@ -4,7 +4,7 @@ Groove est une application web interactive permettant de créer et manipuler des
 
 ## Démo
 
-Une version de démonstration est disponible à l'adresse : [https://groove.aife.io/](https://groove.aife.io/)
+Une version de démonstration est disponible à l'adresse : [https://groove.aife.io/](https://groove.aifedespaix.com)
 
 ## Prérequis
 
